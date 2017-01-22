@@ -74,7 +74,6 @@ export default class Player extends PureComponent<DefaultProps, Props, void> {
   componentDidMount() {
     const {
           index,
-          playing,
           songs,
           updateProgress,
           updateProgressInterval,
@@ -86,8 +85,13 @@ export default class Player extends PureComponent<DefaultProps, Props, void> {
 
     if (updateProgress) {
       setInterval(() => {
-        if (this.player && playing) {
-          updateProgress(Math.max(0, this.player.currentTime) / this.player.duration);
+        if (this.player && this.props.playing) {
+          const currentTime = this.player.currentTime;
+          const duration = this.player.duration;
+          updateProgress({
+            currentTime: Math.max(0, currentTime),
+            duration: Math.max(0, duration),
+          });
         }
       }, updateProgressInterval);
     }
