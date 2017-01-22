@@ -7,6 +7,14 @@ import React, {
 import { Player as AudioPlayer } from 'react-native-audio-toolkit';
 import MusicController from './MusicController';
 
+/*
+* Todos:
+*  1: On song finished callback
+*  2: Seek forward and backward from MusicController
+*  3: Fix IOS out of sync playing
+*  4: Fix android js thread blocking
+*/
+
 export type Song = {
     album?: string;
     artist?: string;
@@ -30,6 +38,7 @@ type Props = {
     updateProgressInterval: number;
     onRequestPlay?: Function;
     onRequestPause?: Function;
+    onRequestStop?: Function;
     onRequestNextTrack?: Function;
     onRequestPreviousTrack?: Function;
 }
@@ -62,6 +71,7 @@ export default class Player extends PureComponent<DefaultProps, Props, void> {
     updateProgressInterval: PropTypes.number,
     onRequestPlay: PropTypes.func,
     onRequestPause: PropTypes.func,
+    onRequestStop: PropTypes.func,
     onRequestNextTrack: PropTypes.func,
     onRequestPreviousTrack: PropTypes.func,
   }
@@ -137,9 +147,17 @@ export default class Player extends PureComponent<DefaultProps, Props, void> {
     }
   }
 
-  indexInBounds = (array:Array<any> = [], index: number = -1): boolean => index >= 0 && index <= array.length - 1;
   player = null;
-  stop = () => this.player && this.player.stop();
+  indexInBounds = (array:Array<any> = [], index: number = -1): boolean =>
+    index >= 0 && index <= array.length - 1;
+  seek = (position: number, callback: Function) =>
+    this.player && this.player.seek(position, callback);
+
+  stop = () => {
+    if (this.player) this.player.stop();
+    if (this.props.onRequestStop) this.props.onRequestStop();
+  };
+
   render() {
     const {
       index,

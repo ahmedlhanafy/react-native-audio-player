@@ -111,9 +111,8 @@ export default class MusicController extends PureComponent<DefaultProps, Props, 
         // MusicControl.on('seekForward', () => {});
         // MusicControl.on('seekBackward', () => {});
 
-        // MusicControl.on('seek', (pos)=> {}); // Android only (Seconds)
+    // MusicControl.on('seek', (pos) => { alert(pos); }); // Android only (Seconds)
         // MusicControl.on('rate', (rating)=> {}); // Android only (Percentage)
-        // MusicControl.on('volume', (volume)=> {}); // Android only (Percentage)
         // MusicControl.on('togglePlayPause', () => {}); // iOS only
 
     MusicControl.on('skipForward', () => {
@@ -145,6 +144,7 @@ export default class MusicController extends PureComponent<DefaultProps, Props, 
       genre = '',
       duration = 0,
       description = '',
+      // FIXME: Convert from string to hex number
       color = 0x444444,
       date = '1983-01-02T00:00:00Z',
       rating = 0,
@@ -157,11 +157,8 @@ export default class MusicController extends PureComponent<DefaultProps, Props, 
     MusicControl.enableControl('previousTrack', enablePreviousTrackControl);
     MusicControl.enableControl('skipForward', enableSkipForwardControl, { interval: skipForwardInterval }); // iOS only
     MusicControl.enableControl('skipBackward', enableSkipBackwardControl, { interval: skipBackwardInterval }); // iOS only
-        // MusicControl.enableControl('seekForward', true);
-        // MusicControl.enableControl('seekBackward', true);
-        // MusicControl.enableControl('seek', true) // Android only
-        // MusicControl.enableControl('rate', true) // Android only
-        // MusicControl.enableControl('volume', false) // Android only
+    // MusicControl.enableControl('seekForward', true);
+    // MusicControl.enableControl('seekBackward', true);
 
     MusicControl.setNowPlaying({
       title,
@@ -179,10 +176,6 @@ export default class MusicController extends PureComponent<DefaultProps, Props, 
     if (Platform.OS === 'android') {
       MusicControl.setPlayback({
         state: playing ? MusicControl.STATE_PLAYING : MusicControl.STATE_PAUSED, // (STATE_ERROR, STATE_STOPPED, STATE_PLAYING, STATE_PAUSED, STATE_BUFFERING)
-                // volume: 100, // (Percentage)
-                // speed: 1, // Playback Rate
-                // elapsedTime: 103, // (Seconds)
-                // bufferedTime: 200 // (Seconds)
       });
     }
     return null;

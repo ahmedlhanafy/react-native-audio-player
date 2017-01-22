@@ -130,12 +130,15 @@ export default class AudioPlayerComponent extends Component {
     },
   }
 
-  play = () => this.setState({ playing: true });
-  pause = () => this.setState({ playing: false });
-  toggle = () => this.setState({ playing: !this.state.playing });
-  next = () => this.setState({ index: this.state.index + 1 });
-  prev = () => this.state.index >= 0 && this.setState({ index: this.state.index - 1 });
-  updateProgress = progress => this.setState({ progress });
+  _player = null;
+  _play = () => this.setState({ playing: true });
+  _pause = () => this.setState({ playing: false });
+  _toggle = () => this.setState({ playing: !this.state.playing });
+  _next = () => this.setState({ index: this.state.index + 1 });
+  _prev = () => this.state.index >= 0 && this.setState({ index: this.state.index - 1 });
+  _updateProgress = progress => this.setState({ progress });
+  _seek = val => this._player.seek(val);
+  _setRef = ref => { this._player = ref; };
 
   render() {
     const {
@@ -143,6 +146,7 @@ export default class AudioPlayerComponent extends Component {
       index,
       progress,
     } = this.state;
+
     const secondsSpent = Math.floor((progress.currentTime / 1000) % 60);
     const minutesSpent = Math.floor((progress.currentTime / (1000 * 60)) % 60);
     const hoursSpent = Math.floor((progress.currentTime / (1000 * 60 * 60)) % 24);
@@ -153,26 +157,32 @@ export default class AudioPlayerComponent extends Component {
 
     return (
       <View style={styles.container}>
-        <TouchableOpacity onPress={this.next}>
+        <TouchableOpacity onPress={this._next}>
           <Text>Next</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={this.toggle}>
+        <TouchableOpacity onPress={this._toggle}>
           <Text>{playing ? 'Pause' : 'Play'}</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={this.prev}>
+        <TouchableOpacity onPress={this._prev}>
           <Text>Previous</Text>
         </TouchableOpacity>
 
-        <Slider maximumValue={progress.duration} value={progress.currentTime}/>
+        <Slider
+          onSlidingComplete={this._seek}
+          maximumValue={progress.duration}
+          value={progress.currentTime}
+        />
         <Text>Current Time: {`${hoursSpent}:${minutesSpent}:${secondsSpent}`}</Text>
         <Text>Duration: {`${hours}:${minutes}:${seconds}`}</Text>
+
         <Player
-          updateProgress={this.updateProgress}
+          ref={this._setRef}
+          updateProgress={this._updateProgress}
           index={index}
-          onRequestNextTrack={this.next}
-          onRequestPause={this.pause}
-          onRequestPlay={this.play}
-          onRequestPreviousTrack={this.prev}
+          onRequestNextTrack={this._next}
+          onRequestPause={this._pause}
+          onRequestPlay={this._play}
+          onRequestPreviousTrack={this._prev}
           playing={playing}
           songs={FakeData.songs.map(song => ({
             title: song.title,
