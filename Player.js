@@ -1,25 +1,37 @@
 /* @flow */
 
-import {
+import React, {
     PureComponent,
     PropTypes,
 } from 'react';
 import { Player as AudioPlayer } from 'react-native-audio-toolkit';
+import MusicController from './MusicController';
 
 type Song = {
-    title: string;
-    artist: string;
-    songArtwork: string;
+    album?: string;
+    artist?: string;
+    artwork?: string;
+    color?: string;
+    date?: string;
+    description?: string;
+    duration?: number;
+    genre?: string;
+    rating?: number;
+    title?: string;
     url: string;
 }
 
 type Props = {
-    songs: Array<Song>;
     index: number;
     playing: boolean;
+    songs: Array<Song>;
     toggle?: () => void;
     updateProgress?: Function;
     updateProgressInterval: number;
+    onRequestPlay?: Function;
+    onRequestPause?: Function;
+    onRequestNextTrack?: Function;
+    onRequestPreviousTrack?: Function;
 }
 
 type DefaultProps = {
@@ -30,17 +42,28 @@ type DefaultProps = {
 export default class Player extends PureComponent<DefaultProps, Props, void> {
 
   static propTypes = {
-    songs: PropTypes.arrayOf(PropTypes.shape({
-      artist: PropTypes.string,
-      title: PropTypes.string.isRequired,
-      songArtwork: PropTypes.string,
-      url: PropTypes.string.isRequired,
-    })),
     index: PropTypes.number,
     playing: PropTypes.bool,
+    songs: PropTypes.arrayOf(PropTypes.shape({
+      album: PropTypes.string,
+      artist: PropTypes.string,
+      artwork: PropTypes.string,
+      color: PropTypes.string,
+      date: PropTypes.string,
+      description: PropTypes.string,
+      duration: PropTypes.number,
+      genre: PropTypes.string,
+      rating: PropTypes.number,
+      title: PropTypes.string,
+      url: PropTypes.string.isRequired,
+    })),
     toggle: PropTypes.func,
     updateProgress: PropTypes.func,
     updateProgressInterval: PropTypes.number,
+    onRequestPlay: PropTypes.func,
+    onRequestPause: PropTypes.func,
+    onRequestNextTrack: PropTypes.func,
+    onRequestPreviousTrack: PropTypes.func,
   }
 
   static defaultProps = {
@@ -50,11 +73,11 @@ export default class Player extends PureComponent<DefaultProps, Props, void> {
 
   componentDidMount() {
     const {
-          songs,
           index,
+          playing,
+          songs,
           updateProgress,
           updateProgressInterval,
-          playing,
       } = this.props;
 
     if (songs) {
@@ -83,13 +106,13 @@ export default class Player extends PureComponent<DefaultProps, Props, void> {
 
   componentWillUpdate(nextProps: Props) {
     const {
-      songs,
       index,
+      songs,
     } = this.props;
     const {
-      songs: nextSongs,
       index: nextIndex,
       playing: nextPlaying,
+      songs: nextSongs,
     } = nextProps;
     if ((!songs && nextSongs) ||
         (this.indexInBounds(songs, nextIndex) && this.indexInBounds(nextSongs, nextIndex) &&
@@ -113,5 +136,35 @@ export default class Player extends PureComponent<DefaultProps, Props, void> {
   indexInBounds = (array:Array<any> = [], index: number = -1): boolean => index >= 0 && index <= array.length - 1;
   player = null;
   stop = () => this.player && this.player.stop();
-  render() { return null; }
+  render() {
+    const {
+      index,
+      playing,
+      songs,
+      onRequestPlay,
+      onRequestPause,
+      onRequestNextTrack,
+      onRequestPreviousTrack,
+    } = this.props;
+    const currentSong: Song = songs && this.indexInBounds(songs, index) && songs[index];
+    return (
+        <MusicController
+          album={currentSong.album}
+          artist={currentSong.artist}
+          artwork={currentSong.artwork}
+          color={currentSong.color}
+          date={currentSong.date}
+          description={currentSong.description}
+          duration={currentSong.duration}
+          genre={currentSong.genre}
+          playing={playing}
+          rating={currentSong.rating}
+          title={currentSong.title}
+          onRequestPlay={onRequestPlay}
+          onRequestPause={onRequestPause}
+          onRequestNextTrack={onRequestNextTrack}
+          onRequestPreviousTrack={onRequestPreviousTrack}
+        />
+      );
+  }
 }

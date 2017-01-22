@@ -153,12 +153,16 @@ export default class AudioPlayerComponent extends Component {
         </TouchableOpacity>
 
         <Player
+          onRequestPlay={() => this.setState({ playing: true })}
+          onRequestPause={() => this.setState({ playing: false })}
+          onRequestNextTrack={() => this.setState({ index: index + 1 })}
+          onRequestPreviousTrack={() => this.setState({ index: index - 1 })}
           index={index}
           playing={playing}
           songs={FakeData.songs.map(song => ({
             title: song.title,
             artist: 'Modern Love',
-            songArtwork: 'http://is1.mzstatic.com/image/thumb/Music71/v4/8f/5d/68/8f5d68de-6ef6-98e8-8f84-91abc2e3cfc4/source/600x600bb.jpg',
+            artwork: 'http://is1.mzstatic.com/image/thumb/Music71/v4/8f/5d/68/8f5d68de-6ef6-98e8-8f84-91abc2e3cfc4/source/600x600bb.jpg',
             url: song.enclosure.url,
           }))}
         />
