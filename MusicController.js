@@ -1,18 +1,9 @@
 import { PureComponent, PropTypes } from 'react';
 import { Platform } from 'react-native';
 import MusicControl from 'react-native-music-control';
+import type { Song } from './Player';
 
 type DefaultProps = {
-    title: string;
-    artwork: string;
-    artist: string;
-    album: string;
-    genre: string;
-    duration: number;
-    description: string;
-    color: string;
-    date: string;
-    rating: number;
     enableStopControl: boolean;
     enableNextTrackControl: boolean;
     enablePreviousTrackControl: boolean;
@@ -20,20 +11,11 @@ type DefaultProps = {
     enableSkipBackwardControl: boolean;
     skipForwardInterval: number;
     skipBackwardInterval: number;
-    pkaying: boolean;
+    playing: boolean;
 }
 
 type Props = {
-    title: string;
-    artwork: string;
-    artist: string;
-    album: string;
-    genre: string;
-    duration: number;
-    description: string;
-    color: string;
-    date: string;
-    rating: number;
+    song?: Song;
     enableStopControl: boolean;
     enableNextTrackControl: boolean;
     enablePreviousTrackControl: boolean;
@@ -54,16 +36,18 @@ type Props = {
 export default class MusicController extends PureComponent<DefaultProps, Props, void> {
 
   static propTypes = {
-    title: PropTypes.string,
-    artwork: PropTypes.string,
-    artist: PropTypes.string,
-    album: PropTypes.string,
-    genre: PropTypes.string,
-    duration: PropTypes.number,
-    description: PropTypes.string,
-    color: PropTypes.string,
-    date: PropTypes.string,
-    rating: PropTypes.number,
+    song: PropTypes.shape({
+      album: PropTypes.string,
+      artist: PropTypes.string,
+      artwork: PropTypes.string,
+      color: PropTypes.string,
+      date: PropTypes.string,
+      description: PropTypes.string,
+      duration: PropTypes.number,
+      genre: PropTypes.string,
+      rating: PropTypes.number,
+      title: PropTypes.string,
+    }),
     enableStopControl: PropTypes.bool,
     enableNextTrackControl: PropTypes.bool,
     enablePreviousTrackControl: PropTypes.bool,
@@ -82,16 +66,6 @@ export default class MusicController extends PureComponent<DefaultProps, Props, 
   }
 
   static defaultProps = {
-    title: '',
-    artwork: 'https://yt3.ggpht.com/0v8T0CTAv8VPxA5lJtz-tqJe-tR-3VQc0ONhD6Az2RWjNRnwh5QQzPYz5I7wbYljU_tQjZ2ok2W59_v_=s900-nd-c-c0xffffffff-rj-k-no',
-    artist: '',
-    album: '',
-    genre: '',
-    duration: 0,
-    description: '',
-    color: 0x444444,
-    date: '1983-01-02T00:00:00Z',
-    rating: 0,
     enableStopControl: false,
     enableNextTrackControl: true,
     enablePreviousTrackControl: true,
@@ -104,14 +78,14 @@ export default class MusicController extends PureComponent<DefaultProps, Props, 
 
   componentDidMount() {
     const {
-            onRequestPlay,
-            onRequestPause,
-            onRequestStop,
-            onRequestNextTrack,
-            onRequestPreviousTrack,
-            onRequestSkipForward,
-            onRequestSkipBackward,
-        } = this.props;
+      onRequestPlay,
+      onRequestPause,
+      onRequestStop,
+      onRequestNextTrack,
+      onRequestPreviousTrack,
+      onRequestSkipForward,
+      onRequestSkipBackward,
+    } = this.props;
 
     MusicControl.enableBackgroundMode(true);
     MusicControl.on('play', () => {
@@ -152,25 +126,30 @@ export default class MusicController extends PureComponent<DefaultProps, Props, 
 
   render() {
     const {
-            album,
-            artist,
-            artwork,
-            color,
-            date,
-            description,
-            duration,
-            enableNextTrackControl,
-            enablePreviousTrackControl,
-            enableSkipBackwardControl,
-            enableSkipForwardControl,
-            enableStopControl,
-            genre,
-            playing,
-            rating,
-            skipBackwardInterval,
-            skipForwardInterval,
-            title,
-        } = this.props;
+      song,
+      enableNextTrackControl,
+      enablePreviousTrackControl,
+      enableSkipBackwardControl,
+      enableSkipForwardControl,
+      enableStopControl,
+      playing,
+      skipBackwardInterval,
+      skipForwardInterval,
+    } = this.props;
+
+    const {
+      title = '',
+      artwork = 'https=//yt3.ggpht.com/0v8T0CTAv8VPxA5lJtz-tqJe-tR-3VQc0ONhD6Az2RWjNRnwh5QQzPYz5I7wbYljU_tQjZ2ok2W59_v_=s900-nd-c-c0xffffffff-rj-k-no',
+      artist = '',
+      album = '',
+      genre = '',
+      duration = 0,
+      description = '',
+      color = 0x444444,
+      date = '1983-01-02T00:00:00Z',
+      rating = 0,
+    } = song;
+
     MusicControl.enableControl('play', true);
     MusicControl.enableControl('pause', true);
     MusicControl.enableControl('stop', enableStopControl);

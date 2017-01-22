@@ -7,7 +7,7 @@ import React, {
 import { Player as AudioPlayer } from 'react-native-audio-toolkit';
 import MusicController from './MusicController';
 
-type Song = {
+export type Song = {
     album?: string;
     artist?: string;
     artwork?: string;
@@ -149,17 +149,8 @@ export default class Player extends PureComponent<DefaultProps, Props, void> {
     const currentSong: Song = songs && this.indexInBounds(songs, index) && songs[index];
     return (
         <MusicController
-          album={currentSong.album}
-          artist={currentSong.artist}
-          artwork={currentSong.artwork}
-          color={currentSong.color}
-          date={currentSong.date}
-          description={currentSong.description}
-          duration={currentSong.duration}
-          genre={currentSong.genre}
+          song={currentSong}
           playing={playing}
-          rating={currentSong.rating}
-          title={currentSong.title}
           onRequestPlay={onRequestPlay}
           onRequestPause={onRequestPause}
           onRequestNextTrack={onRequestNextTrack}
