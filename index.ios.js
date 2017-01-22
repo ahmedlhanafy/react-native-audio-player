@@ -9,7 +9,6 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  TextInput,
   View,
   TouchableOpacity,
 } from 'react-native';
@@ -121,24 +120,13 @@ const FakeData = {
     } ],
 };
 
-const Input = ({ label, value, onChangeText }) => (
-  <View style={{ flexDirection: 'row' }}>
-    <Text>{label}</Text>
-    <TextInput style={{ flex: 1, backgroundColor: 'lightgrey' }} value={value} onChangeText={onChangeText}/>
-  </View>
-);
-
 export default class AudioPlayerComponent extends Component {
   state = {
-    title: '',
-    artist: '',
     playing: false,
     index: 0,
   }
   render() {
     const {
-      title,
-      artist,
       playing,
       index,
     } = this.state;
@@ -154,16 +142,13 @@ export default class AudioPlayerComponent extends Component {
         // />
     return (
       <View style={styles.container}>
-        <Input label='Title' value={title} onChangeText={title => this.setState({ title })}/>
-        <Input label='Artist' value={artist} onChangeText={artist => this.setState({ artist })}/>
-
-        <TouchableOpacity onPress={() => this.setState({ index: index + 1, playing: false })}>
+        <TouchableOpacity onPress={() => this.setState({ index: index + 1 })}>
           <Text>Next</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => this.setState({ playing: !playing })}>
           <Text>{playing ? 'Pause' : 'Play'}</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => this.setState({ index: index - 1, playing: false })}>
+        <TouchableOpacity onPress={() => this.setState({ index: index - 1 })}>
           <Text>Previous</Text>
         </TouchableOpacity>
 

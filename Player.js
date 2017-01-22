@@ -61,11 +61,13 @@ export default class Player extends PureComponent<DefaultProps, Props, void> {
       this.player = new AudioPlayer(songs[index].url);
     }
 
-    setInterval(() => {
-      if (updateProgress && this.player && playing) {
-        updateProgress(Math.max(0, this.player.currentTime) / this.player.duration);
-      }
-    }, updateProgressInterval);
+    if (updateProgress) {
+      setInterval(() => {
+        if (this.player && playing) {
+          updateProgress(Math.max(0, this.player.currentTime) / this.player.duration);
+        }
+      }, updateProgressInterval);
+    }
 
   }
 
@@ -80,22 +82,35 @@ export default class Player extends PureComponent<DefaultProps, Props, void> {
   }
 
   componentWillUpdate(nextProps: Props) {
-    if ((!this.props.songs && nextProps.songs) ||
-        (this.props.songs && this.props.songs[0].url !== nextProps.songs[0].url)) {
+    const {
+      songs,
+      index,
+    } = this.props;
+    const {
+      songs: nextSongs,
+      index: nextIndex,
+      playing: nextPlaying,
+    } = nextProps;
+    if ((!songs && nextSongs) ||
+        (this.indexInBounds(songs, nextIndex) && this.indexInBounds(nextSongs, nextIndex) &&
+        songs && nextSongs && songs[nextIndex].url !== nextSongs[nextIndex].url)) {
       if (this.player) {
         this.player.destroy();
       }
-      this.player = new AudioPlayer(nextProps.songs[0].url);
+      this.player = new AudioPlayer(nextSongs[nextIndex].url);
     }
-    if (this.props.index !== nextProps.index && (nextProps.index >= 0 && nextProps.index <= nextProps.songs.length - 1)) {
+    if (index !== nextIndex && this.indexInBounds(nextSongs, nextIndex)) {
       if (this.player) {
         this.player.destroy();
       }
-      this.player = new AudioPlayer(nextProps.songs[nextProps.index].url);
-    //   this.player.play(this.props.play);
+      this.player = new AudioPlayer(nextSongs[nextIndex].url);
+      if (nextPlaying) {
+        this.player.play();
+      }
     }
   }
 
+  indexInBounds = (array:Array<any> = [], index: number = -1): boolean => index >= 0 && index <= array.length - 1;
   player = null;
   stop = () => this.player && this.player.stop();
   render() { return null; }
